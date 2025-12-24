@@ -5,6 +5,8 @@ class Topic(BaseModel):
     name: str
     importance: str # e.g., High, Medium, Low
     estimated_hours: Optional[float] = None
+    scheduled_date: Optional[str] = None # ISO Format YYYY-MM-DD
+    completed: bool = False
     subtopics: List['Topic'] = []
 
 # Allow Topic to reference itself for subtopics

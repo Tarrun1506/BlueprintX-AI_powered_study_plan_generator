@@ -8,15 +8,16 @@ from app.models.syllabus import SyllabusAnalysisResponse, Topic
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-async def call_ollama(prompt: str, model: str) -> str:
+async def call_ollama(prompt: str, model: str, json_mode: bool = True) -> str:
     """Helper to call local Ollama API."""
     url = f"{settings.OLLAMA_BASE_URL}/api/generate"
     payload = {
         "model": model,
         "prompt": prompt,
         "stream": False,
-        "format": "json"
     }
+    if json_mode:
+        payload["format"] = "json"
     
     async with httpx.AsyncClient(timeout=120.0) as client:
         try:
@@ -110,3 +111,67 @@ async def _recursive_topic_processor(topic_data_list: list) -> tuple[list[Topic]
         validated_topics.append(topic)
 
     return validated_topics, total_hours, priority_topics
+
+async def generate_quiz(topic_name: str, context: str, difficulty: str = "Medium") -> dict:
+    """Generate a quiz for a specific topic."""
+    prompt = f"""
+    Generate a 5-question quiz for the topic '{topic_name}'.
+    Context: {context[:500]}... (truncated)
+    Difficulty: {difficulty}
+
+    Format STRICTLY as JSON:
+    {{
+        "questions": [
+            {{
+                "id": 1,
+                "text": "Question text?",
+                "options": ["Option A", "Option B", "Option C", "Option D"],
+                "correct_answer": "Option A",
+                "explanation": "Why A is correct."
+            }}
+        ]
+    }}
+    """
+    response = await call_ollama(prompt, settings.OLLAMA_ANALYSIS_MODEL)
+    try:
+        return json.loads(response)
+    except json.JSONDecodeError:
+        # Fallback if model outputs text frame
+        return {"questions": [], "error": "Failed to parse quiz format"}
+
+async def chat_with_context(user_query: str, topic_context: str) -> str:
+    """Chat with AI about a specific topic."""
+    
+    # Parse context to clean text to prevent model from hallucinating JSON
+    try:
+        topic_data = json.loads(topic_context)
+        topic_name = topic_data.get('name', 'Unknown Topic')
+        subtopics = ", ".join([st['name'] if isinstance(st, dict) else st for st in topic_data.get('subtopics', [])])
+        
+        context_str = f"Topic: {topic_name}\n"
+        if subtopics:
+            context_str += f"Subtopics: {subtopics}\n"
+    except:
+        # Fallback if text is not JSON
+        context_str = f"Topic Context: {topic_context}"
+
+    prompt = f"""
+    You are a specialized AI tutor restricted to teaching ONLY the current topic.
+    
+    TOPIC CONTEXT:
+    {context_str}
+    
+    STRICT INSTRUCTIONS:
+    1. Analyze the Student Question. Is it directly asking about "{topic_name}"?
+    2. IF YES: Explain the concept clearly and educationally.
+    3. IF NO (e.g. asking about a different topic, general knowledge, or off-topic):
+       - YOU MUST REFUSE.
+       - DO NOT explain the unrelated concept. Do not try to relate it.
+       - REPLY ONLY: "I can only answer questions strictly related to **{topic_name}**. Please ask a question about this topic."
+    
+    Student Question: {user_query}
+    
+    AI Tutor Answer:
+    """
+    # Use a faster model for chat if available, or same analysis model
+    return await call_ollama(prompt, settings.OLLAMA_ANALYSIS_MODEL, json_mode=False)

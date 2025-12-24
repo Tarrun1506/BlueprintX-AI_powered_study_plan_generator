@@ -29,14 +29,16 @@ export const AnalysisProvider = ({ children }) => {
         if (!analysisResult) return;
 
         try {
-            await api.saveAnalysis({
+            const saved = await api.saveAnalysis({
                 filename: analysisResult.filename || 'Untitled',
-                content_hash: analysisResult.content_hash || 'hash', // Need to make sure this is returned by backend
+                content_hash: analysisResult.content_hash || 'hash',
                 analysis_result: analysisResult.analysis_result || analysisResult
             });
             await refreshHistory();
+            return saved;
         } catch (err) {
             console.error('Failed to save analysis', err);
+            return null;
         }
     };
 

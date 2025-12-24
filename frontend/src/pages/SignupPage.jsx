@@ -29,7 +29,7 @@ const SignupPage = () => {
             await signup(email, password);
             // Auto login after signup
             await login(email, password);
-            navigate('/upload');
+            navigate('/dashboard');
         } catch (err) {
             setError(err);
         } finally {

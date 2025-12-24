@@ -56,6 +56,9 @@ app.include_router(syllabus.router, prefix="/api/syllabus", tags=["syllabus"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
+from .api.routes import interactive
+app.include_router(interactive.router, prefix="/api/interactive", tags=["interactive"])
+
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}

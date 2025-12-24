@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Button, CircularProgress, Typography, Box, Alert, Paper, List,
     ListItemText, Collapse, ListItemButton, Card, CardContent,
-    CardActions, Grid, Divider, Snackbar
+    CardActions, Grid, Divider, Snackbar, Tooltip
 } from '@mui/material';
 import {
     UploadFile as UploadFileIcon, ExpandLess, ExpandMore,
-    Article as ArticleIcon, CloudUpload as CloudUploadIcon
+    Article as ArticleIcon, CloudUpload as CloudUploadIcon,
+    CalendarMonth as CalendarMonthIcon
 } from '@mui/icons-material';
 import { useApi } from '../../hooks/useApi';
 import { useAnalysis } from '../../context/AnalysisContext';
@@ -17,10 +19,11 @@ const SyllabusUpload = () => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
-    const { analysisResult, setAnalysisResult, saveCurrentAnalysis } = useAnalysis();
+    const { analysisResult, setAnalysisResult, saveCurrentAnalysis, refreshHistory } = useAnalysis();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
-    const { uploadSyllabus } = useApi();
+    const { uploadSyllabus, generateSchedule, saveAnalysis } = useApi();
+    const navigate = useNavigate();
 
     // Use context state as local state
     const analysis = analysisResult;
@@ -51,15 +54,110 @@ const SyllabusUpload = () => {
             const response = await uploadSyllabus(file);
             console.log('Upload successful, response:', response);
 
-            setAnalysis(response);
-            setSnackbarMessage('Syllabus analysis completed successfully!');
+            // Auto-save immediately to get ID
+            const savedDoc = await saveAnalysis({
+                filename: response.filename || file.name,
+                content_hash: response.content_hash || 'temp',
+                analysis_result: response
+            });
+
+            console.log('Analysis saved:', savedDoc);
+
+            // Refresh "My Library" context
+            await refreshHistory();
+
+            setSnackbarMessage('Analysis completed and saved!');
             setSnackbarOpen(true);
+
+            // Redirect to result page
+            navigate(`/analysis/${savedDoc._id}`);
+
         } catch (err) {
             console.error('Upload failed:', err);
             const errorMessage = err instanceof Error ? err.message : 'Failed to upload and analyze syllabus';
             setError(errorMessage);
         } finally {
             setUploading(false);
+        }
+    };
+
+    const handleGenerateSchedule = async () => {
+        if (!analysis) return;
+        setUploading(true); // Reuse loading state or add new one
+        try {
+            let id = analysis._id;
+            if (!id) {
+                // Auto-save if not saved
+                const saved = await saveCurrentAnalysis();
+                if (!saved || !saved._id) throw new Error("Failed to save analysis before scheduling.");
+                id = saved._id;
+            }
+
+            const updatedAnalysis = await generateSchedule(id, {
+                start_date: new Date().toISOString(),
+                daily_hours: 2.0
+            });
+
+            // Normalize result
+            const result = updatedAnalysis.analysis_result || updatedAnalysis;
+            setAnalysis(result);
+            setSnackbarMessage('Study Schedule Generated!');
+            setSnackbarOpen(true);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleToggleTopic = async (toggledTopic) => {
+        if (!analysis) return;
+
+        // Recursive updater
+        const updateTopics = (topics) => {
+            return topics.map(t => {
+                if (t.name === toggledTopic.name) {
+                    return { ...t, completed: !t.completed };
+                }
+                if (t.subtopics && t.subtopics.length > 0) {
+                    return { ...t, subtopics: updateTopics(t.subtopics) };
+                }
+                return t;
+            });
+        };
+
+        const newTopics = updateTopics(analysis.topics);
+        // Also update priority_topics if they exist by mapping name
+        let newPriorityTopics = analysis.priority_topics;
+        if (newPriorityTopics) {
+            newPriorityTopics = newPriorityTopics.map(pt => {
+                if (pt.name === toggledTopic.name) return { ...pt, completed: !pt.completed };
+                return pt;
+            });
+        }
+
+        const newAnalysis = {
+            ...analysis,
+            topics: newTopics,
+            priority_topics: newPriorityTopics
+        };
+
+        setAnalysis(newAnalysis);
+
+        // Auto-save logic
+        try {
+            // We need to match the structure expected by saveAnalysis
+            // The context `saveCurrentAnalysis` uses state, which might be stale here.
+            // So we call the API directly for the background save.
+            await saveAnalysis({
+                filename: newAnalysis.filename || 'Untitled',
+                content_hash: newAnalysis.content_hash || 'hash',
+                analysis_result: newAnalysis
+            });
+            console.log("Topic status saved.");
+        } catch (e) {
+            console.error("Failed to auto-save topic status", e);
         }
     };
 
@@ -203,170 +301,7 @@ const SyllabusUpload = () => {
                 )}
             </Paper>
 
-            {analysis && (
-                <Paper
-                    elevation={4}
-                    sx={{
-                        p: { xs: 2, sm: 3, md: 4 },
-                        borderRadius: 3,
-                        background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
-                        boxShadow: '0 6px 16px rgba(0,0,0,0.05)',
-                        border: '1px solid rgba(0,0,0,0.05)'
-                    }}
-                >
-                    <Box sx={{ mb: 3 }}>
-                        <Box sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            mb: 1.5
-                        }}>
-                            <Typography
-                                variant="h4"
-                                fontWeight={700}
-                                sx={{
-                                    color: '#2c3e50',
-                                    fontSize: { xs: '1.75rem', md: '2.125rem' }
-                                }}
-                            >
-                                Syllabus Analysis
-                            </Typography>
-                            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                                {analysis.total_study_hours && (
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            color: 'text.secondary',
-                                            fontWeight: 500,
-                                            fontSize: { xs: '1rem', md: '1.125rem' },
-                                            backgroundColor: 'rgba(0,0,0,0.04)',
-                                            px: 2,
-                                            py: 0.75,
-                                            borderRadius: 2
-                                        }}
-                                    >
-                                        Total Study Time: {analysis.total_study_hours.toFixed(1)} hours
-                                    </Typography>
-                                )}
-                                <Button
-                                    variant="outlined"
-                                    color="secondary"
-                                    onClick={async () => {
-                                        await saveCurrentAnalysis();
-                                        setSnackbarMessage('Saved to My Library!');
-                                        setSnackbarOpen(true);
-                                    }}
-                                    sx={{ borderRadius: 2 }}
-                                >
-                                    Save to Library
-                                </Button>
-                            </Box>
-                        </Box>
-                        <Divider sx={{
-                            mb: 4,
-                            borderColor: 'rgba(0,0,0,0.1)',
-                            borderBottomWidth: 2
-                        }} />
-                    </Box>
-
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={12}>
-                                    <Paper
-                                        variant="outlined"
-                                        sx={{
-                                            p: { xs: 2, md: 2.5 },
-                                            borderRadius: 2,
-                                            height: '100%',
-                                            bgcolor: 'rgba(255, 255, 255, 0.9)',
-                                            borderColor: 'rgba(0,0,0,0.08)',
-                                            boxShadow: '0 1px 4px rgba(0,0,0,0.02)',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="h5"
-                                            fontWeight={600}
-                                            gutterBottom
-                                            sx={{
-                                                color: '#2c3e50',
-                                                mb: 2,
-                                                borderBottom: '1px solid rgba(0,0,0,0.05)',
-                                                pb: 1,
-                                                fontSize: { xs: '1.25rem', md: '1.5rem' }
-                                            }}
-                                        >
-                                            Course Topics
-                                        </Typography>
-                                        <Box sx={{ maxHeight: '600px', overflowY: 'auto', pr: 1 }}>
-                                            <List sx={{ pt: 0 }}>
-                                                {analysis.topics.map((topic, index) => (
-                                                    <TopicItem key={index} topic={topic} />
-                                                ))}
-                                            </List>
-                                        </Box>
-                                    </Paper>
-                                </Grid>
-
-                                <Grid item xs={12} md={12}>
-                                    <Paper
-                                        variant="outlined"
-                                        sx={{
-                                            p: { xs: 2, md: 2.5 },
-                                            borderRadius: 2,
-                                            bgcolor: 'rgba(255, 255, 255, 0.9)',
-                                            borderColor: 'rgba(0,0,0,0.08)',
-                                            boxShadow: '0 1px 4px rgba(0,0,0,0.02)',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="h5"
-                                            fontWeight={600}
-                                            gutterBottom
-                                            sx={{
-                                                color: '#2c3e50',
-                                                mb: 2,
-                                                borderBottom: '1px solid rgba(0,0,0,0.05)',
-                                                pb: 1,
-                                                fontSize: { xs: '1.25rem', md: '1.5rem' }
-                                            }}
-                                        >
-                                            Priority Topics
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            sx={{
-                                                mb: 2.5,
-                                                color: '#455a64',
-                                                fontWeight: 500,
-                                                backgroundColor: 'rgba(66, 165, 245, 0.08)',
-                                                px: 1.5,
-                                                py: 1,
-                                                borderRadius: 1,
-                                                fontSize: '0.9rem'
-                                            }}
-                                        >
-                                            Focus on these high-impact topics first
-                                        </Typography>
-                                        <List sx={{ pt: 0 }}>
-                                            {analysis.priority_topics && analysis.priority_topics.length > 0 ? (
-                                                analysis.priority_topics.map((topic, index) => (
-                                                    <TopicItem key={index} topic={topic} />
-                                                ))
-                                            ) : (
-                                                <Typography variant="body2" color="text.secondary" sx={{ pl: 2 }}>
-                                                    No priority topics identified
-                                                </Typography>
-                                            )}
-                                        </List>
-                                    </Paper>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Paper>
-            )}
+            {/* Inline result display removed - redirects to AnalysisResultPage */}
 
             <Snackbar
                 open={snackbarOpen}
@@ -374,7 +309,7 @@ const SyllabusUpload = () => {
                 onClose={handleSnackbarClose}
                 message={snackbarMessage}
             />
-        </Box>
+        </Box >
     );
 };
 

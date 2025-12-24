@@ -22,6 +22,7 @@ const Layout = ({ children }) => {
     // Navigation items
     const navItems = [
         ...(isAuthenticated ? [
+            // Removed 'Dashboard' as requested
             { label: 'Upload Syllabus', path: '/upload' },
             { label: 'My Library', path: '/history' },
         ] : []),
@@ -31,6 +32,9 @@ const Layout = ({ children }) => {
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
     };
+
+    // Determine Home Link Logic
+    const homeLink = isAuthenticated ? '/dashboard' : '/';
 
     const drawer = (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -56,7 +60,7 @@ const Layout = ({ children }) => {
                 {isAuthPage && (
                     <ListItem disablePadding>
                         <ListItemButton component={RouterLink} to="/" sx={{ textAlign: 'center' }}>
-                            <ListItemText primary="Back to Dashboard" />
+                            <ListItemText primary="Back to Home" />
                         </ListItemButton>
                     </ListItem>
                 )}
@@ -89,7 +93,7 @@ const Layout = ({ children }) => {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1, mr: 2, display: { xs: 'none', sm: 'block' } }}>
                             <Button
                                 component={RouterLink}
-                                to="/"
+                                to={homeLink}
                                 color="primary"
                                 sx={{ textTransform: 'none', fontSize: '1.25rem', fontWeight: 'bold' }}
                             >
@@ -100,7 +104,7 @@ const Layout = ({ children }) => {
                         <Typography
                             variant="h6"
                             component={RouterLink}
-                            to="/"
+                            to={homeLink}
                             sx={{
                                 flexGrow: 1,
                                 display: { xs: 'block', sm: 'none' },

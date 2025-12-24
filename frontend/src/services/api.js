@@ -97,3 +97,48 @@ export const deleteAnalysis = async (id) => {
         throw error;
     }
 };
+
+/**
+ * Updates an existing analysis.
+ */
+export const updateAnalysis = async (id, analysisData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/analysis/${id}`, {
+            method: "PUT",
+            headers: getHeaders(),
+            body: JSON.stringify(analysisData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to update analysis: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error in updateAnalysis:', error);
+        throw error;
+    }
+};
+
+/**
+ * Generates a study schedule for a saved analysis.
+ */
+export const generateSchedule = async (id, params) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/analysis/${id}/schedule`, {
+            method: "POST",
+            headers: getHeaders(),
+            body: JSON.stringify(params),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `Schedule generation failed with status ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error in generateSchedule:', error);
+        throw error;
+    }
+};

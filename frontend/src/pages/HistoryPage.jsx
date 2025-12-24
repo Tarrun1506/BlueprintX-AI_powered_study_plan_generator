@@ -16,8 +16,7 @@ import {
 import {
     Delete as DeleteIcon,
     Visibility as VisibilityIcon,
-    History as HistoryIcon,
-    Compare as CompareIcon
+    History as HistoryIcon
 } from '@mui/icons-material';
 import { useAnalysis } from '../context/AnalysisContext';
 import { useNavigate } from 'react-router-dom';
@@ -27,8 +26,8 @@ const HistoryPage = () => {
     const navigate = useNavigate();
 
     const handleView = (analysis) => {
-        setAnalysisResult(analysis.analysis_result);
-        navigate('/upload'); // Redirect to view results
+        // setAnalysisResult(analysis.analysis_result); // Context update optional if new page fetches by ID
+        navigate(`/analysis/${analysis._id}`);
     };
 
     if (loading && savedAnalyses.length === 0) {
@@ -78,11 +77,7 @@ const HistoryPage = () => {
                                                     <VisibilityIcon color="primary" />
                                                 </IconButton>
                                             </Tooltip>
-                                            <Tooltip title="Compare Version (Coming Soon)">
-                                                <IconButton edge="end" sx={{ mr: 1 }} disabled>
-                                                    <CompareIcon />
-                                                </IconButton>
-                                            </Tooltip>
+
                                             <Tooltip title="Delete">
                                                 <IconButton edge="end" onClick={() => removeAnalysis(analysis._id)}>
                                                     <DeleteIcon color="error" />

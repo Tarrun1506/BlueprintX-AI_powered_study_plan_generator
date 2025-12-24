@@ -3,9 +3,6 @@ node_modules/
 backend/venv/
 venv/
 env/
-.env
-backend/.env
-frontend/.env
 *.local
 
 # Build

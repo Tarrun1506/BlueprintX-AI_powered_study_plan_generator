@@ -12,23 +12,22 @@ import {
     Card,
     CardContent,
     useTheme,
+    Avatar
 } from '@mui/material';
 import {
     Info,
     AutoAwesome,
     AssignmentTurnedIn,
-    Search,
     Timeline,
     Psychology,
     Lightbulb,
-    Schedule,
     TrendingUp,
     Rocket,
     BarChart,
     CloudUpload,
-    MenuBook,
-    VideoLibrary,
-    Article,
+    School,
+    Schedule,
+    Insights
 } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -37,22 +36,19 @@ const AboutPage = () => {
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            {/* Our Mission */}
+            {/* Mission Section */}
             <Paper sx={{ p: { xs: 3, md: 4 }, mb: 5, borderRadius: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
                     <Info sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
-                    <Typography variant="h4" component="h2">
+                    <Typography variant="h4" component="h2" fontWeight="bold">
                         Our Mission
                     </Typography>
                 </Box>
-                <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.05rem' }}>
-                    At BlueprintX, we believe that every student deserves clarity and focus in their academic journey.
-                    By simply uploading your syllabus, our local AI provides a comprehensive analysis,
-                    identifying key concepts, assessing topic importance, and estimating required study effort.
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.05rem' }}>
-                    Our platform is built to help you prioritize your learning, making your exam preparation
-                    more efficient and data-driven without your data ever leaving your machine.
+                <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
+                    We believe that success isn't just about working hard—it's about working smart.
+                    BlueprintX transforms the overwhelming chaos of raw syllabi into a clear, actionable roadmap.
+                    By harnessing the power of local AI (Llama 3.2), we provide a personalized study schedule
+                    that respects your time and adapts to your learning pace, ensuring you walk into every exam with confidence.
                 </Typography>
             </Paper>
 
@@ -63,7 +59,7 @@ const AboutPage = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        mb: 4,
+                        mb: 6,
                         color: theme.palette.primary.main,
                         fontWeight: 'bold'
                     }}
@@ -71,7 +67,7 @@ const AboutPage = () => {
                     <Timeline sx={{ mr: 2, fontSize: 40 }} /> How BlueprintX Works
                 </Typography>
 
-                <Box sx={{ position: 'relative', mb: 6 }}>
+                <Box sx={{ position: 'relative', mb: 2 }}>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', md: 'row' },
@@ -79,93 +75,61 @@ const AboutPage = () => {
                         position: 'relative',
                         zIndex: 1
                     }}>
+                        {/* Step 1: Upload */}
                         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Box
-                                sx={{
-                                    width: 80,
-                                    height: 80,
-                                    mb: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <CloudUpload sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
-                            </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Upload</Typography>
-                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
-                                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: 'secondary.main' }}>
+                                <CloudUpload sx={{ fontSize: 40 }} />
+                            </Avatar>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>1. Upload</Typography>
+                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2, textAlign: 'center' }}>
+                                <CardContent sx={{ p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Upload your syllabus document (PDF, DOCX, or TXT) to our secure platform for instant analysis.
+                                        Drag & drop your syllabus (PDF, DOCX, TXT). Our system instantly processes the text.
                                     </Typography>
                                 </CardContent>
                             </Card>
                         </Box>
 
+                        {/* Step 2: Analyze */}
                         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Box
-                                sx={{
-                                    width: 80,
-                                    height: 80,
-                                    mb: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <Psychology sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
-                            </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Analyze</Typography>
-                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
-                                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: 'secondary.main' }}>
+                                <Psychology sx={{ fontSize: 40 }} />
+                            </Avatar>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>2. Analyze</Typography>
+                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2, textAlign: 'center' }}>
+                                <CardContent sx={{ p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Our AI identifies key topics, assesses their importance, and estimates required study time.
+                                        AI breaks it down into granular topics, identifying key concepts and estimating study hours.
                                     </Typography>
                                 </CardContent>
                             </Card>
                         </Box>
 
+                        {/* Step 3: Schedule */}
                         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Box
-                                sx={{
-                                    width: 80,
-                                    height: 80,
-                                    mb: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <BarChart sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
-                            </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Prioritize</Typography>
-                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
-                                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: 'secondary.main' }}>
+                                <Schedule sx={{ fontSize: 40 }} />
+                            </Avatar>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>3. Schedule</Typography>
+                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2, textAlign: 'center' }}>
+                                <CardContent sx={{ p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Focus on high-impact topics identified by AI and organize your study sessions effectively.
+                                        We generate a day-by-day calendar plan based on your exam date and daily availability.
                                     </Typography>
                                 </CardContent>
                             </Card>
                         </Box>
 
+                        {/* Step 4: Master */}
                         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Box
-                                sx={{
-                                    width: 80,
-                                    height: 80,
-                                    mb: 2,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
-                            >
-                                <Rocket sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
-                            </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Execute</Typography>
-                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
-                                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                            <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: 'secondary.main' }}>
+                                <School sx={{ fontSize: 40 }} />
+                            </Avatar>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>4. Master</Typography>
+                            <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2, textAlign: 'center' }}>
+                                <CardContent sx={{ p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Use the generated insights to master your complex subjects and achieve academic excellence.
+                                        Chat with AI tutors for each topic and take quizzes to verify your knowledge.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -174,50 +138,64 @@ const AboutPage = () => {
                 </Box>
             </Paper>
 
-            {/* Core Features Section - Enhanced */}
+            {/* Core Features Section */}
             <Paper sx={{ p: { xs: 3, md: 4 }, mb: 5, borderRadius: 2 }}>
-                <Typography variant="h4" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h4" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                     <AutoAwesome sx={{ mr: 2, color: 'primary.main', fontSize: 40 }} /> Core Features
                 </Typography>
 
-                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap', gap: 3 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, flexWrap: 'wrap', gap: 4 }}>
                     <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                             <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <AssignmentTurnedIn sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
+                                <AssignmentTurnedIn sx={{ color: theme.palette.secondary.main, fontSize: 32 }} />
                             </Box>
                             <Box>
-                                <Typography variant="h6" gutterBottom>AI Syllabus Analysis</Typography>
+                                <Typography variant="h6" fontWeight="bold" gutterBottom>Smart Scheduling</Typography>
                                 <Typography color="text.secondary">
-                                    Upload your syllabus to automatically extract topics, assess their importance, and estimate required study time. Our advanced AI identifies key concepts and helps you understand what to prioritize.
+                                    Don't just get a list. Get a plan. Our algorithmic scheduler distributes topics evenly, ensuring you cover everything without burnout before the big day.
                                 </Typography>
                             </Box>
                         </Box>
                     </Box>
 
                     <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                             <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <Psychology sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
+                                <Psychology sx={{ color: theme.palette.secondary.main, fontSize: 32 }} />
                             </Box>
                             <Box>
-                                <Typography variant="h6" gutterBottom>Local Privacy First</Typography>
+                                <Typography variant="h6" fontWeight="bold" gutterBottom>Interactive AI Tutor</Typography>
                                 <Typography color="text.secondary">
-                                    All syllabus analysis is performed locally on your machine using advanced Llama and Gemma models. Your data never touches the cloud.
+                                    Stuck on "Thermodynamics"? Click "Chat" to ask specific questions. Finished "Calculus"? Take an AI-generated quiz to prove your mastery.
                                 </Typography>
                             </Box>
                         </Box>
                     </Box>
 
                     <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                             <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <TrendingUp sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
+                                <TrendingUp sx={{ color: theme.palette.secondary.main, fontSize: 32 }} />
                             </Box>
                             <Box>
-                                <Typography variant="h6" gutterBottom>Priority Weighting</Typography>
+                                <Typography variant="h6" fontWeight="bold" gutterBottom>Progress Tracking</Typography>
                                 <Typography color="text.secondary">
-                                    Our AI detects "priority topics" across your syllabus, highlighting the sections that require the most attention or carry the most weight.
+                                    Watch your completion stats grow. Our Dashboard gives you a bird's-eye view of your progress across all your courses with beautiful charts.
+                                </Typography>
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                            <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
+                                <Insights sx={{ color: theme.palette.secondary.main, fontSize: 32 }} />
+                            </Box>
+                            <Box>
+                                <Typography variant="h6" fontWeight="bold" gutterBottom>Privacy First</Typography>
+                                <Typography color="text.secondary">
+                                    We use local LLMs (Llama 3.2 via Ollama) for analysis. Your personal documents are analyzed securely on your machine, not the cloud.
                                 </Typography>
                             </Box>
                         </Box>
@@ -233,39 +211,39 @@ const AboutPage = () => {
 
                 <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
                     <Box sx={{ flex: { md: 1 } }}>
-                        <Card elevation={1} sx={{ height: '100%' }}>
+                        <Card elevation={1} sx={{ height: '100%', borderColor: 'primary.light', borderTop: 4 }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-                                    <TrendingUp sx={{ mr: 1, color: theme.palette.primary.main, fontSize: 20 }} /> Improved Efficiency
+                                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                                    <TrendingUp sx={{ mr: 1, fontSize: 24 }} /> Efficiency
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Save valuable time by focusing on what matters most. Our AI helps you prioritize topics based on importance and complexity.
+                                    Stop wasting time planning *what* to study. Open your dashboard and see exactly what needs to be done today.
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Box>
 
                     <Box sx={{ flex: { md: 1 } }}>
-                        <Card elevation={1} sx={{ height: '100%' }}>
+                        <Card elevation={1} sx={{ height: '100%', borderColor: 'secondary.light', borderTop: 4 }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-                                    <BarChart sx={{ mr: 1, color: theme.palette.primary.main, fontSize: 20 }} /> Structured Approach
+                                <Typography variant="h6" gutterBottom sx={{ color: 'secondary.main', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                                    <BarChart sx={{ mr: 1, fontSize: 24 }} /> Clarity
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Transform overwhelming syllabi into manageable, organized study plans. Follow a clear path to exam success with logical learning sequences.
+                                    Turn a 50-page PDF into a clean checklist. Know exactly how many hours are left and track your velocity.
                                 </Typography>
                             </CardContent>
                         </Card>
                     </Box>
 
                     <Box sx={{ flex: { md: 1 } }}>
-                        <Card elevation={1} sx={{ height: '100%' }}>
+                        <Card elevation={1} sx={{ height: '100%', borderColor: 'warning.light', borderTop: 4 }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-                                    <Psychology sx={{ mr: 1, color: theme.palette.primary.main, fontSize: 20 }} /> Data Privacy
+                                <Typography variant="h6" gutterBottom sx={{ color: 'warning.main', display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                                    <Psychology sx={{ mr: 1, fontSize: 24 }} /> Mastery
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Your syllabus stayed on your computer. We use local AI models to ensure total privacy for your documents.
+                                    Don't just read—interact. Our AI tutors ensure you actually understand the concepts before moving on.
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -273,58 +251,24 @@ const AboutPage = () => {
                 </Box>
             </Paper>
 
-            {/* Future Roadmap */}
-            <Paper sx={{ p: { xs: 3, md: 4 }, mb: 5, borderRadius: 2 }}>
-                <Typography variant="h4" component="h2" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                    <Rocket sx={{ mr: 2, color: 'primary.main', fontSize: 40 }} /> Future Roadmap
+            {/* Call to Action */}
+            <Paper sx={{ p: { xs: 3, md: 5 }, borderRadius: 2, textAlign: 'center', bgcolor: 'background.default' }}>
+                <Typography variant="h4" fontWeight="bold" gutterBottom color="primary">
+                    Ready to ace your exams?
                 </Typography>
-
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                    We're constantly working to improve BlueprintX. Here's what's coming next:
+                <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 600, mx: 'auto' }}>
+                    Join thousands of students who are reclaiming their time and optimizing their grades with BlueprintX.
                 </Typography>
-
-                <List>
-                    <ListItem>
-                        <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
-                        <ListItemText
-                            primary="Deeper Topic Extraction"
-                            secondary="More granular breakdown of sub-topics for even better planning."
-                        />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
-                        <ListItemText
-                            primary="Export to PDF/CSV"
-                            secondary="Download your analysis results to keep them handy for offline study."
-                        />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
-                        <ListItemText
-                            primary="Integrated Notes"
-                            secondary="Take notes directly against each topic while you study."
-                        />
-                    </ListItem>
-                    <ListItem>
-                        <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
-                        <ListItemText
-                            primary="Mobile Application"
-                            secondary="Access BlueprintX on-the-go with our upcoming mobile app."
-                        />
-                    </ListItem>
-                </List>
-
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        component={RouterLink}
-                        to="/"
-                        size="large"
-                    >
-                        Start Your Study Journey Today
-                    </Button>
-                </Box>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    component={RouterLink}
+                    to="/"
+                    size="large"
+                    sx={{ px: 5, py: 1.5, borderRadius: 50, fontSize: '1.1rem', fontWeight: 'bold' }}
+                >
+                    Get Started Now
+                </Button>
             </Paper>
         </Container>
     );
