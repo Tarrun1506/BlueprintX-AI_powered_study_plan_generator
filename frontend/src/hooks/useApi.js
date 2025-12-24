@@ -4,8 +4,5 @@ import * as api from "../services/api";
 export const useApi = () => {
     return {
         uploadSyllabus: api.uploadSyllabus,
-        searchResources: api.searchResources,
-        generateStudyPlan: api.generateStudyPlan,
-        getCuratedResourcesForTopic: api.getCuratedResourcesForTopic,
     };
 };

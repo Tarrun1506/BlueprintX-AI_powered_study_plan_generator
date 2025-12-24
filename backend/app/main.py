@@ -2,19 +2,27 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware import Middleware
 from fastapi.staticfiles import StaticFiles
+from contextlib import asynccontextmanager
 
 # Import routers
-from .api.routes import syllabus, resources, study_plans
+from .api.routes import syllabus
+from .core.database import connect_to_mongo, close_mongo_connection
 
 # CORS Configuration
 origins = [
     "http://localhost:5173",
-    "http://localhost:5175",
     "http://127.0.0.1:5173",
-    "http://127.0.0.1:5175",
     "http://localhost:3000",
     "https://blueprintx-frontend.onrender.com",
 ]
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Connect to MongoDB
+    await connect_to_mongo()
+    yield
+    # Shutdown: Close connection
+    await close_mongo_connection()
 
 middleware = [
     Middleware(
@@ -31,7 +39,8 @@ middleware = [
 app = FastAPI(
     title="BlueprintX API", 
     version="0.1.0",
-    middleware=middleware
+    middleware=middleware,
+    lifespan=lifespan
 )
 
 # Mount static files
@@ -42,9 +51,10 @@ def read_root():
     return {"message": "Welcome to BlueprintX API"}
 
 # Include routers
+from .api.routes import syllabus, analysis, auth
 app.include_router(syllabus.router, prefix="/api/syllabus", tags=["syllabus"])
-app.include_router(resources.router, prefix="/api/resources", tags=["resources"])
-app.include_router(study_plans.router, prefix="/api/study-plans", tags=["study_plans"])
+app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 
 @app.get("/health")
 async def health_check():

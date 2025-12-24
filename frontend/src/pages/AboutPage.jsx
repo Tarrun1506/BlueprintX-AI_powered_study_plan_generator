@@ -46,15 +46,13 @@ const AboutPage = () => {
                     </Typography>
                 </Box>
                 <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.05rem' }}>
-                    At BlueprintX, we believe that every student deserves access to personalized, efficient study tools.
-                    By simply uploading your syllabus, our AI provides a comprehensive analysis,
-                    identifying key concepts and suggesting how to allocate your valuable study time.
-                    It then helps you build a dynamic, personalized study plan and discover targeted
-                    resources to deepen your understanding.
+                    At BlueprintX, we believe that every student deserves clarity and focus in their academic journey.
+                    By simply uploading your syllabus, our local AI provides a comprehensive analysis,
+                    identifying key concepts, assessing topic importance, and estimating required study effort.
                 </Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.05rem' }}>
-                    Our platform is built to adapt to your unique learning needs, helping you focus on what matters most
-                    and making your exam preparation journey smoother and more effective.
+                    Our platform is built to help you prioritize your learning, making your exam preparation
+                    more efficient and data-driven without your data ever leaving your machine.
                 </Typography>
             </Paper>
 
@@ -138,13 +136,13 @@ const AboutPage = () => {
                                     justifyContent: 'center'
                                 }}
                             >
-                                <Schedule sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
+                                <BarChart sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
                             </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Plan</Typography>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>Prioritize</Typography>
                             <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
                                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Generate a personalized study schedule optimized for your learning needs and available time.
+                                        Focus on high-impact topics identified by AI and organize your study sessions effectively.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -161,13 +159,13 @@ const AboutPage = () => {
                                     justifyContent: 'center'
                                 }}
                             >
-                                <MenuBook sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
+                                <Rocket sx={{ fontSize: 50, color: theme.palette.secondary.main }} />
                             </Box>
-                            <Typography variant="h6" fontWeight="bold" gutterBottom>Study</Typography>
+                            <Typography variant="h6" fontWeight="bold" gutterBottom>Execute</Typography>
                             <Card elevation={3} sx={{ width: '100%', height: '100%', borderRadius: 2 }}>
                                 <CardContent sx={{ textAlign: 'center', p: 3 }}>
                                     <Typography color="text.secondary">
-                                        Access curated resources for each topic and follow your personalized study plan to success.
+                                        Use the generated insights to master your complex subjects and achieve academic excellence.
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -200,12 +198,12 @@ const AboutPage = () => {
                     <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
                             <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <Schedule sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
+                                <Psychology sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
                             </Box>
                             <Box>
-                                <Typography variant="h6" gutterBottom>Personalized Study Plans</Typography>
+                                <Typography variant="h6" gutterBottom>Local Privacy First</Typography>
                                 <Typography color="text.secondary">
-                                    Generate structured study schedules based on your syllabus analysis. Our AI creates logical learning sequences, organizing topics into coherent sessions optimized for your available study time.
+                                    All syllabus analysis is performed locally on your machine using advanced Llama and Gemma models. Your data never touches the cloud.
                                 </Typography>
                             </Box>
                         </Box>
@@ -214,26 +212,12 @@ const AboutPage = () => {
                     <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
                             <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <VideoLibrary sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
+                                <TrendingUp sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
                             </Box>
                             <Box>
-                                <Typography variant="h6" gutterBottom>Curated Topic Resources</Typography>
+                                <Typography variant="h6" gutterBottom>Priority Weighting</Typography>
                                 <Typography color="text.secondary">
-                                    Access AI-curated video and article recommendations specifically tailored for each topic in your syllabus. Get explanations suitable for beginner to intermediate levels to enhance your understanding.
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </Box>
-
-                    <Box sx={{ flex: { md: 1 }, minWidth: { md: '45%' } }}>
-                        <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
-                            <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40 }}>
-                                <Search sx={{ color: theme.palette.secondary.main, fontSize: 30 }} />
-                            </Box>
-                            <Box>
-                                <Typography variant="h6" gutterBottom>Resource Search</Typography>
-                                <Typography color="text.secondary">
-                                    Search for learning resources across the web using custom queries. Find relevant articles, videos, and tutorials to supplement your study materials and deepen your knowledge on specific topics.
+                                    Our AI detects "priority topics" across your syllabus, highlighting the sections that require the most attention or carry the most weight.
                                 </Typography>
                             </Box>
                         </Box>
@@ -278,10 +262,10 @@ const AboutPage = () => {
                         <Card elevation={1} sx={{ height: '100%' }}>
                             <CardContent>
                                 <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', display: 'flex', alignItems: 'center' }}>
-                                    <Article sx={{ mr: 1, color: theme.palette.primary.main, fontSize: 20 }} /> Quality Resources
+                                    <Psychology sx={{ mr: 1, color: theme.palette.primary.main, fontSize: 20 }} /> Data Privacy
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary">
-                                    Access curated, high-quality learning materials specific to your syllabus topics. No more wasting time searching for relevant content.
+                                    Your syllabus stayed on your computer. We use local AI models to ensure total privacy for your documents.
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -303,22 +287,22 @@ const AboutPage = () => {
                     <ListItem>
                         <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
                         <ListItemText
-                            primary="Advanced Progress Tracking"
-                            secondary="Monitor your study progress with detailed analytics and insights."
+                            primary="Deeper Topic Extraction"
+                            secondary="More granular breakdown of sub-topics for even better planning."
                         />
                     </ListItem>
                     <ListItem>
                         <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
                         <ListItemText
-                            primary="Collaborative Study Groups"
-                            secondary="Create and join study groups to collaborate with peers on the same courses."
+                            primary="Export to PDF/CSV"
+                            secondary="Download your analysis results to keep them handy for offline study."
                         />
                     </ListItem>
                     <ListItem>
                         <ListItemIcon><AutoAwesome sx={{ color: theme.palette.secondary.main }} /></ListItemIcon>
                         <ListItemText
-                            primary="AI-Generated Practice Questions"
-                            secondary="Get customized practice questions and quizzes based on your syllabus topics."
+                            primary="Integrated Notes"
+                            secondary="Take notes directly against each topic while you study."
                         />
                     </ListItem>
                     <ListItem>

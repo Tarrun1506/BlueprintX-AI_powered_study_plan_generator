@@ -13,7 +13,8 @@ import {
     PersonPinCircleOutlined,
     TrendingUp,
 } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const FeatureCard = ({ icon, title, description }) => (
     <Card sx={{ height: '100%' }}>
@@ -32,6 +33,9 @@ const FeatureCard = ({ icon, title, description }) => (
 );
 
 const Dashboard = () => {
+    const { isAuthenticated, logout } = useAuth();
+    const navigate = useNavigate();
+
     return (
         <Box>
             <Box
@@ -58,16 +62,40 @@ const Dashboard = () => {
                     >
                         Upload your syllabus and let BlueprintX create a personalized study plan using advanced AI. Get smart recommendations, track your progress, and maximize your learning efficiency.
                     </Typography>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        component={RouterLink}
-                        to="/upload"
-                        sx={{ py: 1.5, px: 5 }}
-                    >
-                        Get Started Now
-                    </Button>
+                    {isAuthenticated ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                component={RouterLink}
+                                to="/upload"
+                                sx={{ py: 1.5, px: 5 }}
+                            >
+                                Go to Upload
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                size="large"
+                                onClick={logout}
+                                sx={{ py: 1.5, px: 5 }}
+                            >
+                                Logout
+                            </Button>
+                        </Box>
+                    ) : (
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            component={RouterLink}
+                            to="/signup"
+                            sx={{ py: 1.5, px: 5 }}
+                        >
+                            Get Started Now
+                        </Button>
+                    )}
                 </Container>
             </Box>
 

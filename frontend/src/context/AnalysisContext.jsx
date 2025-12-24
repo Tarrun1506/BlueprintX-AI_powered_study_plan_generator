@@ -1,18 +1,73 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import * as api from '../services/api';
 
-// Create the context with a default value
+import { useAuth } from './AuthContext';
+
 const AnalysisContext = createContext(undefined);
 
-// Create a provider component
 export const AnalysisProvider = ({ children }) => {
     const [analysisResult, setAnalysisResult] = useState(null);
-    const [studyPlan, setStudyPlan] = useState(null);
+    const [savedAnalyses, setSavedAnalyses] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const refreshHistory = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await api.fetchAnalyses();
+            setSavedAnalyses(data);
+            setError(null);
+        } catch (err) {
+            setError('Failed to load history');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const saveCurrentAnalysis = async () => {
+        if (!analysisResult) return;
+
+        try {
+            await api.saveAnalysis({
+                filename: analysisResult.filename || 'Untitled',
+                content_hash: analysisResult.content_hash || 'hash', // Need to make sure this is returned by backend
+                analysis_result: analysisResult.analysis_result || analysisResult
+            });
+            await refreshHistory();
+        } catch (err) {
+            console.error('Failed to save analysis', err);
+        }
+    };
+
+    const removeAnalysis = async (id) => {
+        try {
+            await api.deleteAnalysis(id);
+            setSavedAnalyses(prev => prev.filter(a => a._id !== id));
+        } catch (err) {
+            console.error('Failed to delete', err);
+        }
+    };
+
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            refreshHistory();
+        } else {
+            setSavedAnalyses([]);
+        }
+    }, [isAuthenticated, refreshHistory]);
 
     const value = {
         analysisResult,
         setAnalysisResult,
-        studyPlan,
-        setStudyPlan
+        savedAnalyses,
+        refreshHistory,
+        saveCurrentAnalysis,
+        removeAnalysis,
+        loading,
+        error
     };
 
     return (
@@ -22,7 +77,6 @@ export const AnalysisProvider = ({ children }) => {
     );
 };
 
-// Create a custom hook to use the context
 export const useAnalysis = () => {
     const context = useContext(AnalysisContext);
     if (context === undefined) {

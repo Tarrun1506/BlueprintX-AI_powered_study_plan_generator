@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     Toolbar, Typography, Container, Box, Button, Paper,
     IconButton, Drawer, List, ListItem, ListItemButton, ListItemText, Divider
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-
-// Navigation items
-const navItems = [
-    { label: 'Dashboard', path: '/' },
-    { label: 'Upload Syllabus', path: '/upload' },
-    { label: 'Study Plan', path: '/plan' },
-    { label: 'Resources', path: '/resources' },
-    { label: 'About', path: '/about' },
-];
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from '../../context/AuthContext';
 
 const drawerWidth = 240;
 
 const Layout = ({ children }) => {
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { isAuthenticated, logout } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+
+    // Navigation items
+    const navItems = [
+        ...(isAuthenticated ? [
+            { label: 'Upload Syllabus', path: '/upload' },
+            { label: 'My Library', path: '/history' },
+        ] : []),
+        ...(!isAuthenticated && !isAuthPage ? [{ label: 'About', path: '/about' }] : []),
+    ];
 
     const handleDrawerToggle = () => {
         setMobileOpen((prevState) => !prevState);
@@ -38,6 +46,27 @@ const Layout = ({ children }) => {
                         </ListItemButton>
                     </ListItem>
                 ))}
+                {!isAuthenticated && !isAuthPage && (
+                    <ListItem disablePadding>
+                        <ListItemButton component={RouterLink} to="/login" sx={{ textAlign: 'center' }}>
+                            <ListItemText primary="Log In" />
+                        </ListItemButton>
+                    </ListItem>
+                )}
+                {isAuthPage && (
+                    <ListItem disablePadding>
+                        <ListItemButton component={RouterLink} to="/" sx={{ textAlign: 'center' }}>
+                            <ListItemText primary="Back to Dashboard" />
+                        </ListItemButton>
+                    </ListItem>
+                )}
+                {isAuthenticated && (
+                    <ListItem disablePadding>
+                        <ListItemButton onClick={logout} sx={{ textAlign: 'center', color: 'error.main' }}>
+                            <ListItemText primary="Logout" />
+                        </ListItemButton>
+                    </ListItem>
+                )}
             </List>
         </Box>
     );
@@ -70,13 +99,15 @@ const Layout = ({ children }) => {
 
                         <Typography
                             variant="h6"
-                            component="div"
+                            component={RouterLink}
+                            to="/"
                             sx={{
                                 flexGrow: 1,
                                 display: { xs: 'block', sm: 'none' },
                                 textAlign: 'center',
                                 color: 'primary.main',
-                                fontWeight: 'bold'
+                                fontWeight: 'bold',
+                                textDecoration: 'none'
                             }}
                         >
                             BlueprintX
@@ -88,11 +119,43 @@ const Layout = ({ children }) => {
                                     key={item.label}
                                     component={RouterLink}
                                     to={item.path}
-                                    sx={{ color: 'text.primary' }}
+                                    sx={{ color: 'text.primary', mr: 1 }}
                                 >
                                     {item.label}
                                 </Button>
                             ))}
+                            {isAuthenticated ? (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={logout}
+                                    startIcon={<LogoutIcon />}
+                                    sx={{ ml: 1, borderRadius: 2 }}
+                                >
+                                    Logout
+                                </Button>
+                            ) : isAuthPage ? (
+                                <Button
+                                    variant="outlined"
+                                    color="primary"
+                                    component={RouterLink}
+                                    to="/"
+                                    sx={{ ml: 1, borderRadius: 2 }}
+                                >
+                                    Back to Dashboard
+                                </Button>
+                            ) : (
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    component={RouterLink}
+                                    to="/login"
+                                    startIcon={<LoginIcon />}
+                                    sx={{ ml: 1, borderRadius: 2 }}
+                                >
+                                    Log In
+                                </Button>
+                            )}
                         </Box>
                     </Toolbar>
                 </Container>

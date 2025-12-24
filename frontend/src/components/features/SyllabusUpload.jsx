@@ -6,8 +6,7 @@ import {
 } from '@mui/material';
 import {
     UploadFile as UploadFileIcon, ExpandLess, ExpandMore,
-    Article as ArticleIcon, CloudUpload as CloudUploadIcon,
-    PlayArrow as PlayArrowIcon
+    Article as ArticleIcon, CloudUpload as CloudUploadIcon
 } from '@mui/icons-material';
 import { useApi } from '../../hooks/useApi';
 import { useAnalysis } from '../../context/AnalysisContext';
@@ -18,7 +17,7 @@ const SyllabusUpload = () => {
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState(null);
-    const { analysisResult, setAnalysisResult } = useAnalysis();
+    const { analysisResult, setAnalysisResult, saveCurrentAnalysis } = useAnalysis();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const { uploadSyllabus } = useApi();
@@ -51,18 +50,6 @@ const SyllabusUpload = () => {
             console.log(`Uploading file: ${file.name}, size: ${file.size} bytes, type: ${file.type}`);
             const response = await uploadSyllabus(file);
             console.log('Upload successful, response:', response);
-
-            // Mark priority topics for auto-fetching
-            if (response.priority_topics) {
-                const priorityNames = new Set(response.priority_topics.map(t => t.name));
-                const markPriority = (topics) => {
-                    topics.forEach(t => {
-                        if (priorityNames.has(t.name)) t.isPriority = true;
-                        if (t.subtopics) markPriority(t.subtopics);
-                    });
-                };
-                markPriority(response.topics);
-            }
 
             setAnalysis(response);
             setSnackbarMessage('Syllabus analysis completed successfully!');
@@ -245,22 +232,36 @@ const SyllabusUpload = () => {
                             >
                                 Syllabus Analysis
                             </Typography>
-                            {analysis.total_study_hours && (
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        color: 'text.secondary',
-                                        fontWeight: 500,
-                                        fontSize: { xs: '1rem', md: '1.125rem' },
-                                        backgroundColor: 'rgba(0,0,0,0.04)',
-                                        px: 2,
-                                        py: 0.75,
-                                        borderRadius: 2
+                            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                                {analysis.total_study_hours && (
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            color: 'text.secondary',
+                                            fontWeight: 500,
+                                            fontSize: { xs: '1rem', md: '1.125rem' },
+                                            backgroundColor: 'rgba(0,0,0,0.04)',
+                                            px: 2,
+                                            py: 0.75,
+                                            borderRadius: 2
+                                        }}
+                                    >
+                                        Total Study Time: {analysis.total_study_hours.toFixed(1)} hours
+                                    </Typography>
+                                )}
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    onClick={async () => {
+                                        await saveCurrentAnalysis();
+                                        setSnackbarMessage('Saved to My Library!');
+                                        setSnackbarOpen(true);
                                     }}
+                                    sx={{ borderRadius: 2 }}
                                 >
-                                    Total Study Time: {analysis.total_study_hours.toFixed(1)} hours
-                                </Typography>
-                            )}
+                                    Save to Library
+                                </Button>
+                            </Box>
                         </Box>
                         <Divider sx={{
                             mb: 4,

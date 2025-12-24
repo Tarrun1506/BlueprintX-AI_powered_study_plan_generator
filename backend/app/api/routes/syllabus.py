@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse
-from app.services.groq_service import analyze_syllabus
+from app.services.ollama_service import analyze_syllabus
 from app.utils.file_processing import extract_text_from_file
 from app.models.syllabus import SyllabusAnalysisResponse
 import logging
@@ -33,7 +33,7 @@ async def upload_and_analyze_syllabus(
 ):
     """
     Upload a syllabus document (PDF, DOCX, TXT), extract text,
-    and analyze it using the Groq API to identify topics,
+    and analyze it using the local Ollama service to identify topics,
     importance, and estimated study hours.
     """
     try:
@@ -66,10 +66,18 @@ async def upload_and_analyze_syllabus(
             logger.error("Extracted text is empty")
             raise HTTPException(status_code=400, detail="The uploaded file appears to be empty or contains no extractable text.")
 
-        # Analyze syllabus using Groq API
-        logger.info("Analyzing syllabus with Groq...")
+        # Analyze syllabus using local Ollama service
+        logger.info("Analyzing syllabus with Ollama...")
         analysis_result = await analyze_syllabus(text_content)
         logger.info("Analysis complete.")
+
+        # Calculate hash for versioning
+        import hashlib
+        content_hash = hashlib.sha256(text_content.encode()).hexdigest()
+
+        # Add metadata to response
+        analysis_result.filename = file.filename
+        analysis_result.content_hash = content_hash
 
         return analysis_result
 

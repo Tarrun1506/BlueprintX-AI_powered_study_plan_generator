@@ -1,32 +1,26 @@
-from fastapi import Depends
-# Remove unused services if they were placeholders
-# from .services.gemini_service import GeminiService # Example: if get_gemini_service wasn't used elsewhere
-from app.services.tavily_service import get_tavily_service, TavilyService
-from app.services.langchain_service import get_langchain_service, LangChainService
-from app.services.resource_curation_service import get_resource_curation_service, ResourceCurationService
-# Keep study_plan_generator if used, remove if not
-# from app.services.study_plan_generator import StudyPlanGenerator
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+import jwt
+from app.core.config import settings
+from app.core.database import get_database
 
-# Remove unused dependency functions
-# def get_gemini_service():
-#     return GeminiService()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
-# Keep get_tavily_service (now imported)
-# def get_tavily_service():
-#     return TavilyService()
-
-# Keep get_langchain_service (now imported)
-# def get_langchain_service():
-#     return LangChainService()
-
-# Keep study plan generator if used
-# def get_study_plan_generator():
-#     return StudyPlanGenerator()
-
-# Add the new dependency getter (imported)
-# def get_resource_curation_service():
-#     return ResourceCurationService()
-
-# Note: The actual functions (get_tavily_service, get_langchain_service, get_resource_curation_service)
-# are now defined in their respective service files and imported here for clarity and consistency.
-# FastAPI's Depends will work correctly with the imported functions.
+async def get_current_user(token: str = Depends(oauth2_scheme), db = Depends(get_database)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+    except jwt.PyJWTError:
+        raise credentials_exception
+        
+    user = await db.users.find_one({"email": email})
+    if user is None:
+        raise credentials_exception
+    return user

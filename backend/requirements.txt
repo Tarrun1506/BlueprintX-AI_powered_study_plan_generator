@@ -8,16 +8,17 @@ python-docx
 python-multipart # For file uploads
 
 # AI & Search
-google-generativeai # Direct Gemini access
 langchain           # Core LangChain
-langchain-google-genai # Langchain Gemini integration
-langchain-groq      # Langchain Groq integration
-groq                # Direct Groq access
-tavily-python       # Tavily Search API client
+langchain-ollama    # Langchain Ollama integration
 
 # Pydantic for models
-pydantic
+pydantic[email]
 pydantic-settings # For config loading
 
 # Misc
-requests # Might be used by tavily or langchain indirectly, keep for now
+requests # Might be used indirectly, keep for now
+motor    # Async MongoDB driver
+pymongo  # Standard MongoDB driver
+passlib[bcrypt]
+bcrypt==3.2.2 # Required for compatibility with passlib
+PyJWT    # JWT tokens
